@@ -1,3 +1,10 @@
+// before you run:
+// make sure you have ffmpeg
+//   either install ffmpeg yourself, or have the ffmpeg[.exe] executable placed in the same directory as this go program
+//
+// To execute:
+// go run blurfaces.go [inputvideo.mp4] [outputvideo.mp4]
+
 package main
 
 import (
@@ -12,7 +19,7 @@ import (
 
 func worker(filename string) {
     fmt.Println("Start converting segment", filename)
-    cmd1 := exec.Command("sudo", "ffmpeg", "-y", "-i", "temp/"+filename, "-vf", "hue=s=0", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "copy", "temp/_"+filename)
+    cmd1 := exec.Command("ffmpeg", "-y", "-i", "temp/"+filename, "-vf", "hue=s=0", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "copy", "temp/_"+filename)
     var stdout bytes.Buffer
     var stderr bytes.Buffer
     cmd1.Stdout = &stdout
@@ -35,21 +42,12 @@ func worker(filename string) {
 
 func main() {
     filename := os.Args[1]
-    cmd1 := exec.Command("sudo", "ffmpeg", "-y", "-i", filename, "-f", "segment", "-segment_list", "temp/list.ffcat", "-segment_time", "10", "-reset_timestamps", "1", "-c", "copy", "temp/output_%03d.mp4")
+    cmd1 := exec.Command("ffmpeg", "-y", "-i", filename, "-f", "segment", "-segment_list", "temp/list.ffcat", "-segment_time", "10", "-reset_timestamps", "1", "-c", "copy", "temp/output_%03d.mp4")
     var stdout bytes.Buffer
     var stderr bytes.Buffer
     cmd1.Stdout = &stdout
     cmd1.Stderr = &stderr
     if (cmd1.Run() != nil) {
-        fmt.Fprintln(os.Stderr, stderr.String())
-    }
-    
-    cmd2 := exec.Command("sudo", "chmod", "-R", "777", ".")
-    stdout.Reset()
-    stderr.Reset()
-    cmd2.Stdout = &stdout
-    cmd2.Stderr = &stderr
-    if (cmd2.Run() != nil) {
         fmt.Fprintln(os.Stderr, stderr.String())
     }
     
@@ -67,7 +65,7 @@ func main() {
     }
     wg.Wait()
     
-    cmd3 := exec.Command("sudo", "ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "temp/list.ffcat", "-c", "copy", "output.mp4")
+    cmd3 := exec.Command("ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "temp/list.ffcat", "-c", "copy", "output.mp4")
     stdout.Reset()
     stderr.Reset()
     cmd3.Stdout = &stdout
