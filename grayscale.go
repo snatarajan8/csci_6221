@@ -41,7 +41,16 @@ func worker(filename string) {
 }
 
 func main() {
+    if len(os.Args) < 2 {
+      fmt.Println("To run:\n\tgo run grayscale.go [Input File] [Output File]")
+      return
+    }
     filename := os.Args[1]
+    fileOut := "output.mp4"
+    if len(os.Args) >= 3 {
+      fileOut = os.Args[2]
+    }
+    
     cmd1 := exec.Command("ffmpeg", "-y", "-i", filename, "-f", "segment", "-segment_list", "temp/list.ffcat", "-segment_time", "10", "-reset_timestamps", "1", "-c", "copy", "temp/output_%03d.mp4")
     var stdout bytes.Buffer
     var stderr bytes.Buffer
@@ -65,7 +74,7 @@ func main() {
     }
     wg.Wait()
     
-    cmd3 := exec.Command("ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "temp/list.ffcat", "-c", "copy", "output.mp4")
+    cmd3 := exec.Command("ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", "temp/list.ffcat", "-c", "copy", fileOut)
     stdout.Reset()
     stderr.Reset()
     cmd3.Stdout = &stdout

@@ -29,7 +29,7 @@ func main() {
       return
     }
     fileIn := os.Args[1]
-    fileOut := "output.avi"
+    fileOut := "output.mp4"
     if len(os.Args) >= 3 {
       fileOut = os.Args[2]
     }
