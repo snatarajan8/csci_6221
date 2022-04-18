@@ -34,7 +34,7 @@ func main() {
 		file_Dialog.Show()
 		// Show file selection dialog.
 	})
-	output := widget.NewButton("OutPut Folder Choose Address", func() {
+	output := widget.NewButton("Output Address", func() {
 		file_Dialog := dialog.NewFolderOpen(
 			func(r fyne.ListableURI, _ error) {
 				OutputAd = r.Path()
@@ -45,7 +45,7 @@ func main() {
 		log.Println("Output Address is", OutputAd)
 	})
 	combo := widget.NewSelect([]string{"Black & White", "Option 2"}, filter)
-	run := widget.NewButton("Run!!!", run)
+	run := widget.NewButton("Run", run)
 	myWindow.SetContent(container.NewVBox(input, combo, output, run))
 	myWindow.Resize(fyne.NewSize(400, 400))
 	myWindow.ShowAndRun()
